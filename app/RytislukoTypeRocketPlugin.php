@@ -80,6 +80,18 @@ class RytislukoTypeRocketPlugin extends BasePlugin
         // if Elementor is not used then this can throw an error
         add_action( 'elementor/dynamic_tags/register_tags', [ $this, 'register_magic_link_tag' ] );
 
+        // creating shortcode for showing my courses section
+        add_shortcode( 'rytisluko_my_courses', [$this, 'show_my_courses'] );
+
+    }
+
+    public function show_my_courses ($atts)
+    {
+        $users_courses = \Rytisluko\Models\UsersCourses::new()->with('Course')->where('user_id', '=', get_current_user_id())->get();
+        if (!empty($users_courses)) {
+            $view = \Rytisluko\View::new('courses.my_courses', ['courses' => $users_courses]);
+            echo $view->render();
+        }
     }
 
     public static function xp_enroll_student($order_id) 
