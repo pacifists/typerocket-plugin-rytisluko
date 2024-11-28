@@ -1,4 +1,4 @@
-This plugin is TypeRocket as the backbone for it's functionality.
+This plugin uses TypeRocket as the backbone for it's functionality.
 
 The purpose is to have Wordpress interact with Xperiencify platform.
 
