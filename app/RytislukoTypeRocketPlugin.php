@@ -49,11 +49,12 @@ class RytislukoTypeRocketPlugin extends BasePlugin
 
         // Setup Courses
         $course = tr_post_type('Course');
+        // $course->setPostType('rl-course');
         $course->setIcon('dashicons-groups');
         $course->setSupports(['title', 'thumbnail']);
         $course->setTitlePlaceholder( 'Enter course name here' );
-        $course->setRest();
-
+        $course->hideFrontEnd();
+        
         tr_meta_box('Xperiencify Course')->apply($course)->setCallback(function() {
             $form = tr_form();
             echo $form->text('XP Course ID');
