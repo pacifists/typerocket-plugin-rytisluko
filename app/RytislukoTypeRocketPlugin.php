@@ -48,12 +48,11 @@ class RytislukoTypeRocketPlugin extends BasePlugin
         // TODO: Add your init code here
 
         // Setup Courses
-        $course = tr_post_type('Course');
+        $course = tr_post_type('RlCourse');
         // $course->setPostType('rl-course');
         $course->setIcon('dashicons-groups');
         $course->setSupports(['title', 'thumbnail']);
         $course->setTitlePlaceholder( 'Enter course name here' );
-        $course->hideFrontEnd();
         
         tr_meta_box('Xperiencify Course')->apply($course)->setCallback(function() {
             $form = tr_form();
@@ -67,7 +66,7 @@ class RytislukoTypeRocketPlugin extends BasePlugin
         $product = tr_post_type('Product');
         tr_meta_box('Related courses')->apply($product)->setCallback(function() {
             $form = tr_form();
-            echo $form->search('Course ID')->setLabel('Select Course')->multiple()->setPostTypeOptions('Course');
+            echo $form->search('Course ID')->setLabel('Select Course')->multiple()->setPostTypeOptions('RlCourse');
         });
 
         $settings = get_option('rytisluko_settings');
@@ -88,7 +87,7 @@ class RytislukoTypeRocketPlugin extends BasePlugin
 
     public function show_my_courses ($atts)
     {
-        $users_courses = \Rytisluko\Models\UsersCourses::new()->with('Course')->where('user_id', '=', get_current_user_id())->get();
+        $users_courses = \Rytisluko\Models\UsersCourses::new()->with('RlCourse')->where('user_id', '=', get_current_user_id())->get();
         if (!empty($users_courses)) {
             $view = \Rytisluko\View::new('courses.my_courses', ['courses' => $users_courses]);
             echo $view->render();
@@ -120,7 +119,7 @@ class RytislukoTypeRocketPlugin extends BasePlugin
             if (!empty($course_ids)) {
                 foreach($course_ids[0] as $course_id) {
                     // get the related course info
-                    $course = \Rytisluko\Models\Course::new()->with('meta')->findById($course_id);
+                    $course = \Rytisluko\Models\RlCourse::new()->with('meta')->findById($course_id);
                     $user_id = $order->get_customer_id();
 
                     // now need to create connection User -> Course

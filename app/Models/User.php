@@ -10,6 +10,6 @@ class User extends WPUser
 		
 		global $wpdb;
 
-		return $this->belongsToMany(Course::class, "{$wpdb->prefix}users_courses", 'course_id', 'user_id');
+		return $this->belongsToMany(RlCourse::class, "{$wpdb->prefix}users_courses", 'course_id', 'user_id');
 	}
 }

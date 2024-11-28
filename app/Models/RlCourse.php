@@ -3,9 +3,8 @@ namespace Rytisluko\Models;
 
 use TypeRocket\Models\WPPost;
 
-class Course extends WPPost
+class RlCourse extends WPPost
 {
-    // public const POST_TYPE = 'rl-course'; <-- does not seem to change anything
 
     public function users() {
         
