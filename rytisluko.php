@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Rytisluko
-Version: 1.0
+Version: 1.0.1
 Description: Based on Boilerplate TypeRocket Plugin. It houses all custom code required for this website created by me.
 Author: Rytis Luko
 License: GPLv2 or later

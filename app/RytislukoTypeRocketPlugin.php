@@ -87,7 +87,7 @@ class RytislukoTypeRocketPlugin extends BasePlugin
 
     public function show_my_courses ($atts)
     {
-        $users_courses = \Rytisluko\Models\UsersCourses::new()->with('RlCourse')->where('user_id', '=', get_current_user_id())->get();
+        $users_courses = \Rytisluko\Models\UsersCourses::new()->with('Course')->where('user_id', '=', get_current_user_id())->get();
         if (!empty($users_courses)) {
             $view = \Rytisluko\View::new('courses.my_courses', ['courses' => $users_courses]);
             echo $view->render();
