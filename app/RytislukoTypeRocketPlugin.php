@@ -148,8 +148,9 @@ class RytislukoTypeRocketPlugin extends BasePlugin
                     }
 
                     // now need to add new student to xperiencify course
-
+                    
                     $magic_link = self::create_xp_student($api_key, $order, $course);
+
                     if(!empty($magic_link)) {
                         $update_object = \Rytisluko\Models\UsersCourses::new()->findById($users_course_id);
                         $update_object->magic_link = $magic_link;
@@ -208,16 +209,7 @@ class RytislukoTypeRocketPlugin extends BasePlugin
     static function create_omnisend_subscriber($api_key, $order, $course) {
         $curl = curl_init();
 
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://api.omnisend.com/v5/contacts ',
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_POSTFIELDS => array('data' => '{
+        $post_data = '{
                 "identifiers": [
                 {
                     "channels": {
@@ -234,7 +226,18 @@ class RytislukoTypeRocketPlugin extends BasePlugin
                 "tags": ["'. $course->meta->omnisend_tag .'"],
                 "firstName": "'. $order->get_billing_first_name() .'",
                 "lastName": "'. $order->get_billing_last_name() .'"
-            }'),
+            }';
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://api.omnisend.com/v5/contacts',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => $post_data,
             CURLOPT_HTTPHEADER => array(
                 'accept: application/json',
                 'content-type: application/json',
@@ -243,7 +246,6 @@ class RytislukoTypeRocketPlugin extends BasePlugin
         ));
 
         $response = curl_exec($curl);
-
         // Everything after here is optional
         // Check for errors
         if (curl_errno($curl)) {
