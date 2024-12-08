@@ -106,12 +106,10 @@ class RytislukoTypeRocketPlugin extends BasePlugin
         // iterating through each order items (getting product ID and the product object) 
         // (work for simple and variable products)
         foreach ( $order->get_items() as $item_id => $item ) {
-
-            if( $item['variation_id'] > 0 ){
-                $product_id = $item['variation_id']; // variable product
-            } else {
-                $product_id = $item['product_id']; // simple product
-            }
+            
+            // just caring for the product_id, because xp courses are not connected to variations
+            // it goes to the main product so we take it.
+            $product_id = $item['product_id'];
 
             // Get the product object
             $product = wc_get_product( $product_id );
