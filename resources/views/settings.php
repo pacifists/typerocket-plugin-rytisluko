@@ -5,7 +5,6 @@ echo $form->open();
 // About
 $settings = $form->fieldset('Settings', 'Plugin\'s main settings.', [
     $form->text('Xperiencify API key'),
-    $form->text('Omnisend API key'),
 ]);
 
 // Save

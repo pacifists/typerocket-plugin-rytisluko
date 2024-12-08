@@ -57,8 +57,6 @@ class RytislukoTypeRocketPlugin extends BasePlugin
         tr_meta_box('Xperiencify Course')->apply($course)->setCallback(function() {
             $form = tr_form();
             echo $form->text('XP Course ID');
-            echo $form->checkbox('Add to Omnisend as subscriber')->setText('Yes');
-            echo $form->text('Omnisend Tag');
         });
 
         $course->addColumn('XP Course ID');
@@ -101,7 +99,6 @@ class RytislukoTypeRocketPlugin extends BasePlugin
 
         $settings = get_option('rytisluko_settings');
         $api_key = $settings['xperiencify_api_key'];
-        $omnisend_api_key = $settings['omnisend_api_key'];
 
         // Getting an instance of the order object
         $order = wc_get_order($order_id);
@@ -143,14 +140,8 @@ class RytislukoTypeRocketPlugin extends BasePlugin
                         $users_course_id = $course_info->id;
                     }
                     
-                    if (!empty($omnisend_api_key) && !empty($course->meta->add_to_omnisend_as_subscriber)) {
-                        self::create_omnisend_subscriber($omnisend_api_key, $order, $course);
-                    }
-
                     // now need to add new student to xperiencify course
-                    
                     $magic_link = self::create_xp_student($api_key, $order, $course);
-
                     if(!empty($magic_link)) {
                         $update_object = \Rytisluko\Models\UsersCourses::new()->findById($users_course_id);
                         $update_object->magic_link = $magic_link;
@@ -204,62 +195,6 @@ class RytislukoTypeRocketPlugin extends BasePlugin
 
             return $magic_link;
         }
-    }
-
-    static function create_omnisend_subscriber($api_key, $order, $course) {
-        $curl = curl_init();
-
-        $post_data = '{
-                "identifiers": [
-                {
-                    "channels": {
-                        "email": {
-                            "status": "subscribed",
-                            "statusDate": "'. gmdate("Y-m-d\TH:i:s\Z") .'"
-                        }
-                    },
-                    "id": "'. $order->get_billing_email() .'",
-                    "type": "email",
-                    "sendWelcomeMessage": false
-                }
-                ],
-                "tags": ["'. $course->meta->omnisend_tag .'"],
-                "firstName": "'. $order->get_billing_first_name() .'",
-                "lastName": "'. $order->get_billing_last_name() .'"
-            }';
-
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://api.omnisend.com/v5/contacts',
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_POSTFIELDS => $post_data,
-            CURLOPT_HTTPHEADER => array(
-                'accept: application/json',
-                'content-type: application/json',
-                'X-API-KEY: '. $api_key
-            ),
-        ));
-
-        $response = curl_exec($curl);
-        // Everything after here is optional
-        // Check for errors
-        if (curl_errno($curl)) {
-          $error_msg = curl_error($curl);
-        }
-        // Handle any possible errors
-        if (isset($error_msg)) {
-            \TypeRocket\Pro\Utility\Log::error("=== Omnisend subscribe failed ===");
-            \TypeRocket\Pro\Utility\Log::error($error_msg);
-          // return false;
-        }
-
-        curl_close($curl);
-        // for now it's shoot and forget manner
     }
 
     public function register_magic_link_tag ($dynamic_tags) 
